@@ -113,6 +113,7 @@ fb0da1312109   centos        "bash"     3 minutes ago    Exited (0) About a minu
 
 Соберите Docker образ с Ansible, загрузите на Docker Hub и пришлите ссылку вместе с остальными ответами к задачам.
 
+https://hub.docker.com/layers/myrepo/kmankov/myrepo/ansible-2.10.0/images/sha256-f0f84b1cf8d38f3d0dec84406eac6c928dfcca37327e3fc85d284e5586d33001?context=repo
 
 ---
 
