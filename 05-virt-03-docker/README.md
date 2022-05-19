@@ -136,6 +136,29 @@ https://hub.docker.com/r/kmankov/myrepo
 
 Ответ:
 
+```shell
+kmankov$ docker pull centos
+Using default tag: latest
+latest: Pulling from library/centos
+a1d0c7532777: Pull complete 
+Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
+Status: Downloaded newer image for centos:latest
+docker.io/library/centos:latest
+
+kmankov$ docker pull debian
+Using default tag: latest
+latest: Pulling from library/debian
+67e8aa6c8bbc: Pull complete 
+Digest: sha256:6137c67e2009e881526386c42ba99b3657e4f92f546814a33d35b14e60579777
+Status: Downloaded newer image for debian:latest
+docker.io/library/debian:latest
+
+kmankov$ docker image ls
+REPOSITORY               TAG       IMAGE ID       CREATED        SIZE
+debian                   latest    c4905f2a4f97   7 days ago     124MB
+centos                   latest    5d0da3dc9764   8 months ago   231MB
+```
+
 ```
 [root@fedora mankov]# mkdir /data
 [root@fedora mankov]# docker run -it -v /data:/data --name centos centos bash
@@ -178,32 +201,6 @@ CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                 
 fb0da1312109   centos        "bash"     3 minutes ago    Exited (0) About a minute ago             centos
 2aedfcc8f99c   hello-world   "/hello"   52 minutes ago   Exited (0) 52 minutes ago                 affectionate_montalcini
 ```
-
-Ответ:
-
-```shell
-kmankov$ docker pull centos
-Using default tag: latest
-latest: Pulling from library/centos
-a1d0c7532777: Pull complete 
-Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
-Status: Downloaded newer image for centos:latest
-docker.io/library/centos:latest
-
-kmankov$ docker pull debian
-Using default tag: latest
-latest: Pulling from library/debian
-67e8aa6c8bbc: Pull complete 
-Digest: sha256:6137c67e2009e881526386c42ba99b3657e4f92f546814a33d35b14e60579777
-Status: Downloaded newer image for debian:latest
-docker.io/library/debian:latest
-
-kmankov$ docker image ls
-REPOSITORY               TAG       IMAGE ID       CREATED        SIZE
-debian                   latest    c4905f2a4f97   7 days ago     124MB
-centos                   latest    5d0da3dc9764   8 months ago   231MB
-```
-
 
 
 ## Задача 4 (*)
