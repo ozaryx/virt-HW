@@ -62,6 +62,51 @@ Hey, Netology
 - Добавьте еще один файл в папку ```/data``` на хостовой машине;
 - Подключитесь во второй контейнер и отобразите листинг и содержание файлов в ```/data``` контейнера.
 
+Ответ:
+
+```
+[root@fedora mankov]# mkdir /data
+[root@fedora mankov]# docker run -it -v /data:/data --name centos centos bash
+
+[root@fb0da1312109 /]# touch /data/test_centos.txt
+[root@fb0da1312109 /]# cat <<EOF>/data/test_centos.txt
+> test write to volume from centos
+> EOF                            
+[root@fb0da1312109 /]# ls /data/
+test_centos.txt
+[root@fb0da1312109 /]# exit
+
+[root@fedora mankov]# ls /data
+test_centos.txt
+
+[root@fedora mankov]# cat <<EOF>/data/test_host.txt
+> test write to volume from host
+> EOF
+
+[root@fedora mankov]# ls /data
+test_centos.txt  test_host.txt
+
+[root@fedora mankov]# docker run -it -v /data:/data --name debian debian bash
+Unable to find image 'debian:latest' locally
+latest: Pulling from library/debian
+67e8aa6c8bbc: Pull complete 
+Digest: sha256:6137c67e2009e881526386c42ba99b3657e4f92f546814a33d35b14e60579777
+Status: Downloaded newer image for debian:latest
+
+root@49fd2ca2f44e:/# ls -l /data
+total 8
+-rw-r--r-- 1 root root 33 May 19 07:16 test_centos.txt
+-rw-r--r-- 1 root root 31 May 19 07:17 test_host.txt
+root@49fd2ca2f44e:/# 
+exit
+
+[root@fedora mankov]# docker ps -a
+CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                          PORTS     NAMES
+49fd2ca2f44e   debian        "bash"     27 seconds ago   Exited (0) 5 seconds ago                  debian
+fb0da1312109   centos        "bash"     3 minutes ago    Exited (0) About a minute ago             centos
+2aedfcc8f99c   hello-world   "/hello"   52 minutes ago   Exited (0) 52 minutes ago                 affectionate_montalcini
+```
+
 ## Задача 4 (*)
 
 Воспроизвести практическую часть лекции самостоятельно.
