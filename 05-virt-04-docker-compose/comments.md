@@ -99,3 +99,75 @@ service_account_id: ajev66fh3q56tinitvfn
 created_at: "2022-05-19T16:35:54.591278166Z"
 key_algorithm: RSA_2048
 ```
+
+```shell
+terraform kmankov$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding latest version of hashicorp/null...
+- Finding latest version of hashicorp/local...
+- Finding latest version of yandex-cloud/yandex...
+- Installing hashicorp/local v2.2.3...
+- Installed hashicorp/local v2.2.3 (signed by HashiCorp)
+- Installing yandex-cloud/yandex v0.74.0...
+- Installed yandex-cloud/yandex v0.74.0 (self-signed, key ID E40F590B50BB8E40)
+- Installing hashicorp/null v3.1.1...
+- Installed hashicorp/null v3.1.1 (signed by HashiCorp)
+
+Partner and community providers are signed by their developers.
+If you'd like to know more about provider signing, you can read about it here:
+https://www.terraform.io/docs/cli/plugins/signing.html
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+
+```
+
+```shell
+terraform kmankov$ terraform validate
+Success! The configuration is valid.
+
+```
+```shell
+terraform kmankov$ terraform plan
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+...
+
+Plan: 13 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + external_ip_address_node01 = (known after apply)
+  + external_ip_address_node02 = (known after apply)
+  + external_ip_address_node03 = (known after apply)
+  + external_ip_address_node04 = (known after apply)
+  + external_ip_address_node05 = (known after apply)
+  + external_ip_address_node06 = (known after apply)
+  + internal_ip_address_node01 = "192.168.101.11"
+  + internal_ip_address_node02 = "192.168.101.12"
+  + internal_ip_address_node03 = "192.168.101.13"
+  + internal_ip_address_node04 = "192.168.101.14"
+  + internal_ip_address_node05 = "192.168.101.15"
+  + internal_ip_address_node06 = "192.168.101.16"
+
+```
+
+
+
