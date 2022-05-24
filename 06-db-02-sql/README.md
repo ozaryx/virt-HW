@@ -297,19 +297,28 @@ test_db=# \dp
 
 Используя SQL синтаксис - наполните таблицы следующими тестовыми данными:
 ```sql
-insert into orders ("наименование", "цена") values ("Шоколад", 10);
-insert into orders values ("Принтер", 3000);
-insert into orders values ("Книга", 500);
-insert into orders values ("Монитор", 7000);
-insert into orders values ("Гитара", 4000);
-
+test_db=# insert into orders ("наименование", "цена") values ('Шоколад', 10);
+INSERT 0 1
+test_db=# insert into orders ("наименование", "цена") values ('Принтер', 3000);
+INSERT 0 1
+test_db=# insert into orders ("наименование", "цена") values ('Книга', 500);
+INSERT 0 1
+test_db=# insert into orders ("наименование", "цена") values ('Монитор', 7000);
+INSERT 0 1
+test_db=# insert into orders ("наименование", "цена") values ('Гитара', 4000);
+INSERT 0 1
 ```
 ```sql
-insert into clients values ("Иванов Иван Иванович", "USA");
-insert into clients values ("Петров Петр Петрович", "Canada");
-insert into clients values ("Иоганн Себастьян Бах", "Japan");
-insert into clients values ("Ронни Джеймс Дио", "Russia");
-insert into clients values ("Ritchie Blackmore", "Russia");
+test_db=# insert into clients ("фамилия", "страна проживания") values ('Иванов Иван Иванович', 'USA');
+INSERT 0 1
+test_db=# insert into clients ("фамилия", "страна проживания") values ('Петров Петр Петрович', 'Canada');
+INSERT 0 1
+test_db=# insert into clients ("фамилия", "страна проживания") values ('Иоганн Себастьян Бах', 'Japan');
+INSERT 0 1
+test_db=# insert into clients ("фамилия", "страна проживания") values ('Ронни Джеймс Дио', 'Russia');
+INSERT 0 1
+test_db=# insert into clients ("фамилия", "страна проживания") values ('Ritchie Blackmore', 'Russia');
+INSERT 0 1
 ```
 
 Таблица orders
@@ -333,10 +342,24 @@ insert into clients values ("Ritchie Blackmore", "Russia");
 |Ritchie Blackmore| Russia|
 
 Используя SQL синтаксис:
-- вычислите количество записей для каждой таблицы 
+- вычислите количество записей для каждой таблицы
 - приведите в ответе:
     - запросы 
     - результаты их выполнения.
+
+```sql
+test_db=# select count(*) from orders;
+ count 
+-------
+     5
+(1 row)
+
+test_db=# select count(*) from clients;
+ count 
+-------
+     5
+(1 row)
+```
 
 ## Задача 4
 
@@ -351,10 +374,54 @@ insert into clients values ("Ritchie Blackmore", "Russia");
 |Иоганн Себастьян Бах| Гитара |
 
 Приведите SQL-запросы для выполнения данных операций.
+```sql
+test_db=# begin;
+BEGIN
+
+test_db=# update clients set "заказ" = (select id from orders where "наименование" = 'Книга') where id = (select id from clients where "фамилия" = 'Иванов Иван Иванович'); 
+UPDATE 1
+
+test_db=# update clients set "заказ" = (select id from orders where "наименование" = 'Монитор') where id = (select id from clients where "фамилия" = 'Петров Петр Петрович'); 
+UPDATE 1
+
+test_db=# update clients set "заказ" = (select id from orders where "наименование" = 'Гитара') where id = (select id from clients where "фамилия" = 'Иоганн Себастьян Бах'); 
+UPDATE 1
+
+test_db=# select * from clients where "фамилия" = 'Иванов Иван Иванович';
+ id |       фамилия        | страна проживания | заказ 
+----+----------------------+-------------------+-------
+  1 | Иванов Иван Иванович | USA               |     3
+(1 row)
+
+test_db=# select * from clients;
+ id |       фамилия        | страна проживания | заказ 
+----+----------------------+-------------------+-------
+  4 | Ронни Джеймс Дио     | Russia            |      
+  5 | Ritchie Blackmore    | Russia            |      
+  1 | Иванов Иван Иванович | USA               |     3
+  2 | Петров Петр Петрович | Canada            |     4
+  3 | Иоганн Себастьян Бах | Japan             |     5
+(5 rows)
+
+test_db=# commit;
+COMMIT
+```
 
 Приведите SQL-запрос для выдачи всех пользователей, которые совершили заказ, а также вывод данного запроса.
  
 Подсказк - используйте директиву `UPDATE`.
+
+```sql
+test_db=# select c."фамилия", o."наименование" from clients c join orders o on (o.id=c."заказ");
+
+фамилия        | наименование 
+----------------------+--------------
+ Иванов Иван Иванович | Книга
+ Петров Петр Петрович | Монитор
+ Иоганн Себастьян Бах | Гитара
+(3 rows)
+
+```
 
 ## Задача 5
 
@@ -363,18 +430,209 @@ insert into clients values ("Ritchie Blackmore", "Russia");
 
 Приведите получившийся результат и объясните что значат полученные значения.
 
+```sql
+test_db=# explain select c."фамилия", o."наименование" from clients c join orders o on (o.id=c."заказ");
+
+QUERY PLAN                                
+-------------------------------------------------------------------------
+ Hash Join  (cost=37.00..57.24 rows=810 width=64)
+   Hash Cond: (c."заказ" = o.id)
+   ->  Seq Scan on clients c  (cost=0.00..18.10 rows=810 width=36)
+   ->  Hash  (cost=22.00..22.00 rows=1200 width=36)
+         ->  Seq Scan on orders o  (cost=0.00..22.00 rows=1200 width=36)
+(5 rows)
+
+```
+ Выведен план выполнения запроса и стоимость выполнения каждого шага плана.
+
+
 ## Задача 6
 
 Создайте бэкап БД test_db и поместите его в volume, предназначенный для бэкапов (см. Задачу 1).
+```shell
+test_db=# \! bash
+root@64ff84305010:/# pg_dump -U postgres -d test_db > /backup/test_db.sql
+ 
+root@64ff84305010:/# more /backup/test_db.sql 
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.11 (Debian 12.11-1.pgdg110+1)
+-- Dumped by pg_dump version 12.11 (Debian 12.11-1.pgdg110+1)
+
+```
 
 Остановите контейнер с PostgreSQL (но не удаляйте volumes).
+```shell
+$ sudo docker stop postgres12
+postgres12
+
+$ sudo docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED        STATUS                      PORTS     NAMES
+64ff84305010   postgres:12   "docker-entrypoint.s…"   2 hours ago    Exited (0) 12 seconds ago             postgres12
+
+$ ls -l backup/
+total 8
+-rw-r--r-- 1 root root 4339 May 24 23:40 test_db.sql
+
+```
 
 Поднимите новый пустой контейнер с PostgreSQL.
+```shell
+$ sudo docker run -d --name postgres12stdb -e POSTGRES_PASSWORD=mysecretpassword -e PGDATA=/var/lib/postgresql/data/pgdata -e POSTGRES_DB=test_db -v /home/mankov/docker/pgsql/data_stdb:/var/lib/postgresql/data -v /home/mankov/docker/pgsql/backup:/backup postgres:12
+3ca561441ec4a79045fc3ac939c11ec30646b0e9cbacb7cb4a8784a36aabc370
+
+$ sudo docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                     PORTS      NAMES
+3ca561441ec4   postgres:12   "docker-entrypoint.s…"   8 seconds ago   Up 6 seconds               5432/tcp   postgres12stdb
+64ff84305010   postgres:12   "docker-entrypoint.s…"   3 hours ago     Exited (0) 6 minutes ago              postgres12
+```
+```sql
+$ sudo docker exec -ti postgres12stdb psql -U postgres
+psql (12.11 (Debian 12.11-1.pgdg110+1))
+Type "help" for help.
+
+postgres=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ test_db   | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+(4 rows)
+
+postgres=# \c test_db
+You are now connected to database "test_db" as user "postgres".
+test_db=# \dt
+Did not find any relations.
+test_db=# \du
+                                   List of roles
+ Role name |                         Attributes                         | Member of 
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+```
+
 
 Восстановите БД test_db в новом контейнере.
 
 Приведите список операций, который вы применяли для бэкапа данных и восстановления. 
+```sql
+test_db=# create user "test-admin-user" password 'secret-test-admin-user';
+CREATE ROLE
 
+test_db=# create user "test-simple-user" password 'secret-test-simple-user';
+CREATE ROLE
+
+```
+```shell
+test_db=# \! bash
+root@3ca561441ec4:/# psql -U postgres -d test_db < /backup/test_db.sql 
+SET
+SET
+SET
+SET
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+SET
+SET
+SET
+SET
+SET
+SET
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER TABLE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+CREATE SEQUENCE
+ALTER TABLE
+ALTER SEQUENCE
+ALTER TABLE
+ALTER TABLE
+COPY 5
+COPY 5
+ setval 
+--------
+      5
+(1 row)
+
+ setval 
+--------
+      5
+(1 row)
+
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+GRANT
+GRANT
+GRANT
+GRANT
+
+```
+```sql
+test_db=# \du
+                                       List of roles
+    Role name     |                         Attributes                         | Member of 
+------------------+------------------------------------------------------------+-----------
+ postgres         | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ test-admin-user  |                                                            | {}
+ test-simple-user |                                                            | {}
+
+test_db=# \dt
+          List of relations
+ Schema |  Name   | Type  |  Owner   
+--------+---------+-------+----------
+ public | clients | table | postgres
+ public | orders  | table | postgres
+(2 rows)
+
+test_db=# \dp
+                                           Access privileges
+ Schema |      Name      |   Type   |         Access privileges          | Column privileges | Policies 
+--------+----------------+----------+------------------------------------+-------------------+----------
+ public | clients        | table    | postgres=arwdDxt/postgres         +|                   | 
+        |                |          | "test-admin-user"=arwdDxt/postgres+|                   | 
+        |                |          | "test-simple-user"=arwd/postgres   |                   | 
+ public | clients_id_seq | sequence |                                    |                   | 
+ public | orders         | table    | postgres=arwdDxt/postgres         +|                   | 
+        |                |          | "test-admin-user"=arwdDxt/postgres+|                   | 
+        |                |          | "test-simple-user"=arwd/postgres   |                   | 
+ public | orders_id_seq  | sequence |                                    |                   | 
+(4 rows)
+
+```
+```sql
+test_db=# select c."фамилия", o."наименование" from clients c join orders o on (o.id=c."заказ");
+       фамилия        | наименование 
+----------------------+--------------
+ Иванов Иван Иванович | Книга
+ Петров Петр Петрович | Монитор
+ Иоганн Себастьян Бах | Гитара
+(3 rows)
+
+test_db=# select c."фамилия", c."страна проживания", o."наименование" as "заказ" from clients c left outer join orders o on (o.id=c."заказ");
+       фамилия        | страна проживания |  заказ  
+----------------------+-------------------+---------
+ Ронни Джеймс Дио     | Russia            | 
+ Ritchie Blackmore    | Russia            | 
+ Иванов Иван Иванович | USA               | Книга
+ Петров Петр Петрович | Canada            | Монитор
+ Иоганн Себастьян Бах | Japan             | Гитара
+(5 rows)
+
+```
 ---
 
 ### Как cдавать задание
