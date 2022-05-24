@@ -338,6 +338,17 @@ mysql> show profile for query 13;
 
 ```
 
+```sql
+mysql> ALTER TABLE orders ENGINE = MyISAM;
+Query OK, 5 rows affected (0.18 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE orders ENGINE = InnoDB;
+Query OK, 5 rows affected (0.08 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+```
+
+
 ## Задача 4 
 
 Изучите файл `my.cnf` в директории /etc/mysql.
