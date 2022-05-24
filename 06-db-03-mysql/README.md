@@ -387,20 +387,19 @@ datadir         = /var/lib/mysql
 secure-file-priv= NULL
 
 # Скорость IO важнее сохранности данных
-
+innodb_use_native_aio = ON
 
 # Нужна компрессия таблиц для экономии места на диске
-
+innodb_compression_level = 9
 
 # Размер буффера с незакомиченными транзакциями 1 Мб
-
-
+innodb_log_buffer_size = 1048576
 
 # Буффер кеширования 30% от ОЗУ
-Innodb_buffer_pool_bytes_data = 1204689
+Innodb_buffer_pool_bytes_data = 1204689000
 
 # Размер файла логов операций 100 Мб
-
+innodb_log_file_size = 102400000
 
 # Custom config should go here
 !includedir /etc/mysql/conf.d/
