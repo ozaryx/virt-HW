@@ -353,6 +353,18 @@ Records: 5  Duplicates: 0  Warnings: 0
 
 Изучите файл `my.cnf` в директории /etc/mysql.
 
+```shell
+root@21fb410560ff:/# more /etc/mysql/my.cnf
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
+
+# Custom config should go here
+!includedir /etc/mysql/conf.d/
+```
+
 Измените его согласно ТЗ (движок InnoDB):
 - Скорость IO важнее сохранности данных
 - Нужна компрессия таблиц для экономии места на диске
@@ -361,6 +373,38 @@ Records: 5  Duplicates: 0  Warnings: 0
 - Размер файла логов операций 100 Мб
 
 Приведите в ответе измененный файл `my.cnf`.
+
+```shell
+root@21fb410560ff:/# cat /proc/meminfo | grep MemTotal
+MemTotal:        4015632 kB
+```
+
+```shell
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+secure-file-priv= NULL
+
+# Скорость IO важнее сохранности данных
+
+
+# Нужна компрессия таблиц для экономии места на диске
+
+
+# Размер буффера с незакомиченными транзакциями 1 Мб
+
+
+
+# Буффер кеширования 30% от ОЗУ
+Innodb_buffer_pool_bytes_data = 1204689
+
+# Размер файла логов операций 100 Мб
+
+
+# Custom config should go here
+!includedir /etc/mysql/conf.d/
+```
 
 ---
 
