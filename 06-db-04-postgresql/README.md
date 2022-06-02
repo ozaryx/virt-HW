@@ -216,16 +216,102 @@ test_database=# select attname, avg_width
 
 Предложите SQL-транзакцию для проведения данной операции.
 
+Выполню секционирование через наследование
 ```sql
+test_database=# create table orders_1 (check (price > 499)) inherits (orders);
+CREATE TABLE
+
+test_database=# create table orders_2 (check (price <= 499)) inherits (orders);
+CREATE TABLE
+
+test_database=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | orders   | table | postgres
+ public | orders_1 | table | postgres
+ public | orders_2 | table | postgres
+(3 rows)
+
+test_database=# \d orders_1
+                                  Table "public.orders_1"
+ Column |         Type          | Collation | Nullable |              Default               
+--------+-----------------------+-----------+----------+------------------------------------
+ id     | integer               |           | not null | nextval('orders_id_seq'::regclass)
+ title  | character varying(80) |           | not null | 
+ price  | integer               |           |          | 0
+Check constraints:
+    "orders_1_price_check" CHECK (price > 499)
+Inherits: orders
+
+test_database=# \d orders_2
+                                  Table "public.orders_2"
+ Column |         Type          | Collation | Nullable |              Default               
+--------+-----------------------+-----------+----------+------------------------------------
+ id     | integer               |           | not null | nextval('orders_id_seq'::regclass)
+ title  | character varying(80) |           | not null | 
+ price  | integer               |           |          | 0
+Check constraints:
+    "orders_2_price_check" CHECK (price <= 499)
+Inherits: orders
+
+test_database=# with cte as (
+                     delete from only orders where price>499 returning *) 
+		insert into orders_1 
+		select * from cte;
+INSERT 0 3
+
+test_database=# with cte as (
+                     delete from only orders where price<=499 returning *) 
+		insert into orders_2 
+		select * from cte;
+INSERT 0 5
+
+test_database=# select * from orders;
+ id |        title         | price 
+----+----------------------+-------
+  2 | My little database   |   500
+  6 | WAL never lies       |   900
+  8 | Dbiezdmin            |   501
+  1 | War and peace        |   100
+  3 | Adventure psql time  |   300
+  4 | Server gravity falls |   300
+  5 | Log gossips          |   123
+  7 | Me and my bash-pet   |   499
+(8 rows)
+
+test_database=# select * from orders_1;
+ id |       title        | price 
+----+--------------------+-------
+  2 | My little database |   500
+  6 | WAL never lies     |   900
+  8 | Dbiezdmin          |   501
+(3 rows)
+
+test_database=# select * from orders_2;
+ id |        title         | price 
+----+----------------------+-------
+  1 | War and peace        |   100
+  3 | Adventure psql time  |   300
+  4 | Server gravity falls |   300
+  5 | Log gossips          |   123
+  7 | Me and my bash-pet   |   499
+(5 rows)
+
+test_database=# select * from only orders;
+ id | title | price 
+----+-------+-------
+(0 rows)
 
 ```
 
 Можно ли было изначально исключить "ручное" разбиение при проектировании таблицы orders?
 
 ```text
-Можно. Необходимо создать триггер на операции вставки в таблицу, который будет проверять в какой диапазон 
-попадает значение аттрибута и если есть нужная партиция, то будет выполнять вставку в существующую партицию, если нет 
-то будет создавать нужную партицию и только потом выполнять вставку.
+Можно. Необходимо было создать таблицу, используя либо декларативное секционирование с использованием правил. 
+Новые секции необходимо создавать вручную, или скриптом по расписанию.
+Либо использовать секционирование через наследование, и использовать триггер на вставку в таблицу и хранимую 
+процедуру для создания новых секций и вставке новых строк в нужные секции.
 ```
 
 ## Задача 4
@@ -234,6 +320,21 @@ test_database=# select attname, avg_width
 
 Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
 
+Добавлю констрейнт на уникальность столбца title
+```sql
+CREATE TABLE public.orders_1 (
+    CONSTRAINT orders_1_price_check CHECK ((price >= 999)),
+    CONSTRAINT orders_1_title_uniq UNIQUE (title)
+)
+INHERITS (public.orders);
+
+CREATE TABLE public.orders_2 (
+    CONSTRAINT orders_2_price_check CHECK ((price > 499)),
+    CONSTRAINT orders_2_title_uniq UNIQUE (title)
+)
+INHERITS (public.orders);
+
+```
 ---
 
 ### Как cдавать задание
