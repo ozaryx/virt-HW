@@ -10,7 +10,7 @@ $ sudo docker run -d \
 	-e POSTGRES_PASSWORD=mysecretpassword \
 	-e PGDATA=/var/lib/postgresql/data/pgdata \
 	-v /home/mankov/docker/pgsql13:/var/lib/postgresql/data \
-  -p 55432:5432\
+        -p 55432:5432 \
 	postgres:13
 ```
 
