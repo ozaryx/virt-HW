@@ -26,7 +26,7 @@ postgres=#
 Воспользуйтесь командой `\?` для вывода подсказки по имеющимся в `psql` управляющим командам.
 
 **Найдите и приведите** управляющие команды для:
-- вывода списка БД
+- вывода списка БД  
 `\l[+]   [PATTERN]      list databases`
 ```shell
 postgres=# \l
@@ -41,7 +41,7 @@ postgres=# \l
 (3 rows)
 ```
 
-- подключения к БД
+- подключения к БД  
 `\c[onnect] {[DBNAME|- USER|- HOST|- PORT|-] | conninfo}  connect to new database (currently "postgres")`
 ```shell
 postgres=# \c
@@ -51,7 +51,7 @@ postgres=# \c template1
 You are now connected to database "template1" as user "postgres".
 ```
 
-- вывода списка таблиц
+- вывода списка таблиц  
 `\dt[S+] [PATTERN]      list tables`
 ```shell
 template1=# \c postgres
@@ -60,16 +60,16 @@ postgres=# \dt
 Did not find any relations.
 ```
 
-- вывода описания содержимого таблиц
+- вывода описания содержимого таблиц  
 `\d[S+]  NAME           describe table, view, sequence, or index`
 
-- выхода из psql
+- выхода из psql  
 `\q                     quit psql`
 
 
 ## Задача 2
 
-Используя `psql` создайте БД `test_database`.
+Используя `psql` создайте БД `test_database`.  
 ```shell
 postgres=# \h CREATE DATABASE
 Command:     CREATE DATABASE
