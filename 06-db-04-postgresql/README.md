@@ -109,7 +109,7 @@ test_database=#
 ```
 Изучите [бэкап БД](https://github.com/netology-code/virt-homeworks/tree/master/06-db-04-postgresql/test_data).
 
-Восстановите бэкап БД в `test_database`.
+Восстановите бэкап БД в `test_database`.  
 `\i FILE                execute commands from file`
 ```shell
 test_database=# \cd /var/lib/postgresql
