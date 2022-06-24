@@ -31,6 +31,59 @@
 
 Далее мы будем работать с данным экземпляром elasticsearch.
 
+**Ответ:**
+
+- текст Dockerfile манифеста  
+```shell
+#6.5. Elasticsearch
+FROM centos:7
+LABEL ElasticSearch Lab 6.5
+
+ENV PATH=/usr/lib:/usr/lib/jvm/jre-11/bin:$PATH
+
+RUN yum install wget -y 
+
+RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.2.3-linux-x86_64.tar.gz \
+    && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.2.3-linux-x86_64.tar.gz.sha512 
+
+RUN yum install perl-Digest-SHA -y 
+
+RUN shasum -a 512 -c elasticsearch-8.2.3-linux-x86_64.tar.gz.sha512 \ 
+    && tar -xzf elasticsearch-8.2.3-linux-x86_64.tar.gz \
+    && yum upgrade -y
+    
+ADD elasticsearch.yml /elasticsearch-8.2.3/config/
+
+ENV JAVA_HOME=/elasticsearch-8.2.3/jdk/
+ENV ES_HOME=/elasticsearch-8.2.3
+
+RUN groupadd elasticsearch \
+    && useradd -g elasticsearch elasticsearch
+    
+RUN mkdir /var/lib/logs \
+    && chown elasticsearch:elasticsearch /var/lib/logs \
+    && mkdir /var/lib/data \
+    && chown elasticsearch:elasticsearch /var/lib/data \
+    && chown -R elasticsearch:elasticsearch /elasticsearch-8.2.3/
+
+RUN mkdir /elasticsearch-8.2.3/snapshots &&\
+    chown elasticsearch:elasticsearch /elasticsearch-8.2.3/snapshots
+    
+USER elasticsearch
+ENTRYPOINT ["/usr/sbin/init"]
+CMD ["/elasticsearch-8.2.3/bin/elasticsearch"]
+
+```
+
+- ссылку на образ в репозитории dockerhub  
+```shell
+docker pull kmankov/myrepo:els-8.2.3
+```
+
+- ответ `elasticsearch` на запрос пути `/` в json виде
+
+
+
 ## Задача 2
 
 В этом задании вы научитесь:
