@@ -54,7 +54,6 @@ RUN shasum -a 512 -c elasticsearch-8.2.3-linux-x86_64.tar.gz.sha512 \
     
 ADD elasticsearch.yml /elasticsearch-8.2.3/config/
 
-ENV JAVA_HOME=/elasticsearch-8.2.3/jdk/
 ENV ES_HOME=/elasticsearch-8.2.3
 
 RUN groupadd elasticsearch \
@@ -70,7 +69,6 @@ RUN mkdir /elasticsearch-8.2.3/snapshots &&\
     chown elasticsearch:elasticsearch /elasticsearch-8.2.3/snapshots
     
 USER elasticsearch
-ENTRYPOINT ["/usr/sbin/init"]
 CMD ["/elasticsearch-8.2.3/bin/elasticsearch"]
 
 ```
