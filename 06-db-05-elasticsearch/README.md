@@ -79,9 +79,11 @@ docker pull kmankov/myrepo:els-8.2.3
 ```
 
 - ответ `elasticsearch` на запрос пути `/` в json виде
-```json
+```shell
 @fedora ~/docker/elasticsearch
 $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks https://localhost:9200/
+```
+```json
 {
   "name" : "faf3ee0eeb4b",
   "cluster_name" : "netology_test",
