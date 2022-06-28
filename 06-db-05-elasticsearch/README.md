@@ -79,7 +79,27 @@ docker pull kmankov/myrepo:els-8.2.3
 ```
 
 - ответ `elasticsearch` на запрос пути `/` в json виде
-
+```json
+@fedora ~/docker/elasticsearch
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks https://localhost:9200/
+{
+  "name" : "faf3ee0eeb4b",
+  "cluster_name" : "netology_test",
+  "cluster_uuid" : "rv05jyulR2qsTxx5Jh1TyQ",
+  "version" : {
+    "number" : "8.2.3",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "9905bfb62a3f0b044948376b4f607f70a8a151b4",
+    "build_date" : "2022-06-08T22:21:36.455508792Z",
+    "build_snapshot" : false,
+    "lucene_version" : "9.1.0",
+    "minimum_wire_compatibility_version" : "7.17.0",
+    "minimum_index_compatibility_version" : "7.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
 
 
 ## Задача 2
