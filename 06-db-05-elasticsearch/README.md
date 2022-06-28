@@ -70,12 +70,16 @@ RUN mkdir /elasticsearch-8.2.3/snapshots &&\
     
 USER elasticsearch
 CMD ["/elasticsearch-8.2.3/bin/elasticsearch"]
+```
 
+```shell
+sudo docker build kmankov/myrepo:els-8.2.3 .
+sudo docker push kmankov/myrepo:els-8.2.3
 ```
 
 - ссылку на образ в репозитории dockerhub  
 ```shell
-docker pull kmankov/myrepo:els-8.2.3
+sudo docker pull kmankov/myrepo:els-8.2.3
 ```
 
 - ответ `elasticsearch` на запрос пути `/` в json виде
@@ -102,7 +106,6 @@ $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks https://localhost:9200/
   "tagline" : "You Know, for Search"
 }
 ```
-
 
 ## Задача 2
 
@@ -133,6 +136,120 @@ $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks https://localhost:9200/
 При проектировании кластера elasticsearch нужно корректно рассчитывать количество реплик и шард,
 иначе возможна потеря данных индексов, вплоть до полной, при деградации системы.
 
+**Ответы**
+```shell
+
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/ind-1?pretty" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,  
+      "number_of_replicas": 0 
+    }
+  }
+}
+'
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "ind-1"
+}
+
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/ind-2?pretty" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 2,  
+      "number_of_replicas": 1 
+    }
+  }
+}
+'
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "ind-2"
+}
+
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/ind-3?pretty" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 4,  
+      "number_of_replicas": 2 
+    }
+  }
+}
+'
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "ind-3"
+}
+```
+
+```shell
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/indices?bytes=b&s=store.size:desc,index:asc&v=true'
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   ind-3 GO1rvmovScefWBMdkD5NVg   4   2          0            0        900            900
+yellow open   ind-2 _lgadsXgQTWjzPd0hOn1Iw   2   1          0            0        450            450
+green  open   ind-1 Q82aeXyeS_mrAPrifSQTdA   1   0          0            0        225            225
+```
+```shell
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cluster/health?pretty'
+{
+  "cluster_name" : "netology_test",
+  "status" : "yellow",
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 8,
+  "active_shards" : 8,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 10,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 44.44444444444444
+}
+```
+
+Часть индексов и кластер находится в состоянии yellow потому что кластер состоит из одного узла и не все реплики индексов запущены.
+```shell
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/shards?v=true'
+index       shard prirep state      docs store ip         node
+ind-1       0     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-3       0     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-3       0     r      UNASSIGNED                       
+ind-3       0     r      UNASSIGNED                       
+ind-3       1     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-3       1     r      UNASSIGNED                       
+ind-3       1     r      UNASSIGNED                       
+ind-3       2     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-3       2     r      UNASSIGNED                       
+ind-3       2     r      UNASSIGNED                       
+ind-3       3     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-3       3     r      UNASSIGNED                       
+ind-3       3     r      UNASSIGNED                       
+ind-2       0     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-2       0     r      UNASSIGNED                       
+ind-2       1     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
+ind-2       1     r      UNASSIGNED                       
+.security-7 0     p      STARTED               172.17.0.2 faf3ee0eeb4b
+```
+
+```
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X DELETE "https://localhost:9200/ind-1,ind-2,ind-3?pretty"
+{
+  "acknowledged" : true
+}
+
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/indices?bytes=b&s=store.size:desc,index:asc&v=true'
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+```
+
 ## Задача 3
 
 В данном задании вы научитесь:
@@ -162,6 +279,101 @@ $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks https://localhost:9200/
 
 Подсказки:
 - возможно вам понадобится доработать `elasticsearch.yml` в части директивы `path.repo` и перезапустить `elasticsearch`
+
+**Ответ**
+
+Создать репозиторий
+```shell
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/_snapshot/netology_backup?pretty" -H 'Content-Type: application/json' -d'
+{
+  "type": "fs",
+  "settings": {
+    "location": "/elasticsearch-8.2.3/snapshots"
+  }
+}
+'
+{
+  "acknowledged" : true
+}
+```
+
+Создать индекс
+```
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/test?pretty" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,  
+      "number_of_replicas": 0 
+    }
+  }
+}
+'
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "test"
+}
+
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/indices?bytes=b&s=store.size:desc,index:asc&v=true'
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test  MfpBPe6VT3G6QnwYIs9b9A   1   0          0            0        225            225
+```
+
+Список снапшотов
+```
+$ sudo docker exec -ti festive_elbakyan bash
+[elasticsearch@faf3ee0eeb4b /]$ ls -l /elasticsearch-8.2.3/snapshots/
+total 32
+-rw-rw-r-- 1 elasticsearch elasticsearch   841 Jun 28 04:11 index-0
+-rw-rw-r-- 1 elasticsearch elasticsearch     8 Jun 28 04:11 index.latest
+drwxrwxr-x 1 elasticsearch elasticsearch    88 Jun 28 04:11 indices
+-rw-rw-r-- 1 elasticsearch elasticsearch 18202 Jun 28 04:11 meta-6mkYZhkBR_2yG4vKC2-_4g.dat
+-rw-rw-r-- 1 elasticsearch elasticsearch   351 Jun 28 04:11 snap-6mkYZhkBR_2yG4vKC2-_4g.dat
+```
+
+Удалть индекс test. Создать индекс test-2
+```
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X DELETE "https://localhost:9200/test?pretty"
+{
+  "acknowledged" : true
+}
+
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/test-2?pretty" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,  
+      "number_of_replicas": 0 
+    }
+  }
+}
+'
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "test-2"
+}
+
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/indices?bytes=b&s=store.size:desc,index:asc&v=true'
+health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test-2 cNSsHStLTRGdx2LehzgnYQ   1   0          0            0        225            225
+```
+
+Восстановить состояние кластера
+```
+$ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X POST 'https://localhost:9200/_snapshot/netology_backup/test_snapshot/_restore?pretty'
+{
+  "accepted" : true
+}
+
+$ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/indices?bytes=b&s=store.size:desc,index:asc&v=true'
+health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   test   XrY1LjMISImnm0nL8IQmMg   1   0          0            0        225            225
+green  open   test-2 cNSsHStLTRGdx2LehzgnYQ   1   0          0            0        225            225
+
+```
+
 
 ---
 
