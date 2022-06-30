@@ -137,8 +137,9 @@ $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks https://localhost:9200/
 иначе возможна потеря данных индексов, вплоть до полной, при деградации системы.
 
 **Ответы**
-```shell
 
+Создать индексы
+```shell
 $ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/ind-1?pretty" -H 'Content-Type: application/json' -d'
 {
   "settings": {
@@ -187,7 +188,7 @@ $ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X PUT "https://localhost:9200/ind-3?p
   "index" : "ind-3"
 }
 ```
-
+Получить список и статус индексов
 ```shell
 $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cat/indices?bytes=b&s=store.size:desc,index:asc&v=true'
 health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
@@ -195,6 +196,7 @@ yellow open   ind-3 GO1rvmovScefWBMdkD5NVg   4   2          0            0      
 yellow open   ind-2 _lgadsXgQTWjzPd0hOn1Iw   2   1          0            0        450            450
 green  open   ind-1 Q82aeXyeS_mrAPrifSQTdA   1   0          0            0        225            225
 ```
+Получить статус кластера
 ```shell
 $ curl -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -ks 'https://localhost:9200/_cluster/health?pretty'
 {
@@ -239,7 +241,7 @@ ind-2       1     p      STARTED       0  225b 172.17.0.2 faf3ee0eeb4b
 ind-2       1     r      UNASSIGNED                       
 .security-7 0     p      STARTED               172.17.0.2 faf3ee0eeb4b
 ```
-
+Удалить индексы
 ```
 $ curl -k -u elastic:Ms_qm1IbHYjvc9aw4Zl_ -X DELETE "https://localhost:9200/ind-1,ind-2,ind-3?pretty"
 {
