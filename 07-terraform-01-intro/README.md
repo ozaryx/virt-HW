@@ -48,6 +48,17 @@
 Установите терраформ при помощи менеджера пакетов используемого в вашей операционной системе.
 В виде результата этой задачи приложите вывод команды `terraform --version`.
 
+```
+$ brew install terraform
+
+$ terraform --version
+Terraform v1.2.4
+on darwin_amd64
++ provider registry.terraform.io/hashicorp/local v2.2.3
++ provider registry.terraform.io/hashicorp/null v3.1.1
++ provider registry.terraform.io/yandex-cloud/yandex v0.74.0
+```
+
 ## Задача 3. Поддержка легаси кода. 
 
 В какой-то момент вы обновили терраформ до новой версии, например с 0.12 до 0.13. 
@@ -57,6 +68,45 @@
 
 В виде результата этой задачи приложите вывод `--version` двух версий терраформа доступных на вашем компьютере 
 или виртуальной машине.
+
+Можно использовать tfenv
+```
+$ brew install tfenv
+
+$ tfenv install 1.1.9
+Installing Terraform v1.1.9
+...
+Installation of terraform v1.1.9 successful. To make this your default version, run 'tfenv use 1.1.9'
+
+$ tfenv use 1.1.9
+Switching default version to v1.1.9
+Switching completed
+
+$ terraform --version
+Terraform v1.1.9
+on darwin_amd64
++ provider registry.terraform.io/hashicorp/local v2.2.3
++ provider registry.terraform.io/hashicorp/null v3.1.1
++ provider registry.terraform.io/yandex-cloud/yandex v0.74.0
+
+$ tfenv install latest
+Installing Terraform v1.2.4
+...
+Installation of terraform v1.2.4 successful. To make this your default version, run 'tfenv use 1.2.4'
+
+$ tfenv use 1.2.4
+Switching default version to v1.2.4
+Switching completed
+
+$ terraform --version
+Terraform v1.2.4
+on darwin_amd64
++ provider registry.terraform.io/hashicorp/local v2.2.3
++ provider registry.terraform.io/hashicorp/null v3.1.1
++ provider registry.terraform.io/yandex-cloud/yandex v0.74.0
+```
+
+Также есть инструмент tfswitch
 
 ---
 
