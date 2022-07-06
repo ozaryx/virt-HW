@@ -14,7 +14,7 @@
    
 Вам, как девопс инженеру, будет необходимо принять решение об инструментах для организации инфраструктуры.
 На данный момент в вашей компании уже используются следующие инструменты: 
-- остатки Сloud Formation, 
+- остатки СloudFormation, 
 - некоторые образы сделаны при помощи Packer,
 - год назад начали активно использовать Terraform, 
 - разработчики привыкли использовать Docker, 
@@ -40,6 +40,14 @@
 
 Если для ответа на эти вопросы недостаточно информации, то напишите какие моменты уточните на совещании.
 
+**Ответ**
+1. Лучше всего использовать изменяемую инфраструктуру, но весь код инфраструктуры необходимо хранить в VCS, можно будет разворачивать и откатывать изменения в инфрастуктуре. Также такой подход позволит избежать configuration drift (незадокументированных изменений инфраструктуры) на этапе становления системы.
+2. Центральный сервер на данном этапе не нужен - заказчик один, серверов скорее всего будет не так много, и отвлекаться на поддержку центрального сервера на данном этапе нет необходимости.
+3. Будут использованы агенты системы мониторинга, агенты управления конфигурацией использоваться не будут.
+4. Будут использованы средства для управления конфигурацией - Kubernetes и инициализации ресурсов - Terraform.
+
+- Максимально будут использоваться уже известные инструменты Terraform - разворачивание виртуальной среды, Docker - упаковка приложений, Teamcity - автоматизация процессов, Kubernetes - для управления конфигурацией/инфраструктурой.
+- Новые инструменты будут рассматриваться по ходу проекта при необходимости решения задач по мере поступления.
 
 ## Задача 2. Установка терраформ. 
 
@@ -108,6 +116,42 @@ on darwin_amd64
 
 Также есть инструмент tfswitch
 
+Также можно установить терраформ из архивов в разные каталоги, и сделать линки на разные версии. Линк terraform можно сделать на версию по умолчанию.
+```
+~# mkdir -p /usr/local/tf
+~# mkdir -p /usr/local/tf/12
+~# mkdir -p /usr/local/tf/13
+
+~# cd /usr/local/tf/12/
+/usr/local/tf/12# wget https://hashicorp-releases.website.yandexcloud.net/terraform/0.12.0/terraform_0.12.0_linux_amd64.zip
+/usr/local/tf/12# unzip terraform_0.12.0_linux_amd64.zip
+
+/usr/local/tf/12# cd /usr/local/tf/13/
+/usr/local/tf/13# wget https://hashicorp-releases.website.yandexcloud.net/terraform/0.13.0/terraform_0.13.0_linux_amd64.zip
+/usr/local/tf/13# unzip terraform_0.13.0_linux_amd64.zip
+
+~# ln -s /usr/local/tf/12/terraform /usr/bin/terraform12
+~# ln -s /usr/local/tf/13/terraform /usr/bin/terraform13
+~# ln -s /usr/local/tf/13/terraform /usr/bin/terraform
+
+~# terraform12 --version
+Terraform v0.12.0
+
+Your version of Terraform is out of date! The latest version
+is 1.2.3. You can update by downloading from www.terraform.io/downloads.html
+
+~# terraform13 --version
+Terraform v0.13.0
+
+Your version of Terraform is out of date! The latest version
+is 1.2.3. You can update by downloading from https://www.terraform.io/downloads.html
+
+~# terraform --version
+Terraform v0.13.0
+
+Your version of Terraform is out of date! The latest version
+is 1.2.3. You can update by downloading from https://www.terraform.io/downloads.html
+```
 ---
 
 ### Как cдавать задание
