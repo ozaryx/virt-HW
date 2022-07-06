@@ -9,7 +9,7 @@ provider "yandex" {
 
 resource "yandex_compute_instance" "node01" {
   name                      = "node01"
-  zone                      = "ru-central1-a"
+  zone                      = "ru-central1-b"
   hostname                  = "node01.netology.cloud"
   allow_stopping_for_update = true
 
@@ -20,7 +20,7 @@ resource "yandex_compute_instance" "node01" {
 
   boot_disk {
     initialize_params {
-      image_id    = "${var.ubuntu-2004-lts}"
+      image_id    = "${var.centos-7-base}"
       name        = "root-node01"
       type        = "network-nvme"
       size        = "50"
@@ -28,11 +28,11 @@ resource "yandex_compute_instance" "node01" {
   }
 
   network_interface {
-    subnet_id = "enp5bqafqq0s4qht5hmr"
+    subnet_id = "${yandex_vpc_subnet.default.id}"
     nat       = true
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "centos:${file("~/.ssh/id_rsa.pub")}"
   }
 }
