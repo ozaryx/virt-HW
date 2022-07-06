@@ -15,6 +15,16 @@
 
 ![](img/yc.png)
 
+main.tf
+```
+provider "yandex" {
+  service_account_key_file = "key.json"
+  cloud_id  = "${var.yandex_cloud_id}"
+  folder_id = "${var.yandex_folder_id}"
+  zone      = "ru-central1-a"
+}
+```
+
 ## Задача 2. Создание aws ec2 или yandex_compute_instance через терраформ. 
 
 1. В каталоге `terraform` вашего основного репозитория, который был создан в начале курсе, создайте файл `main.tf` и `versions.tf`.
