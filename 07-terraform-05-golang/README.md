@@ -88,15 +88,25 @@ $ ./div3
 
 Создайте тесты для функций из предыдущего задания. 
 
-1. 
+1. https://github.com/ozaryx/virt-HW/blob/main/07-terraform-05-golang/src/m2f_test.go
+```
+$ go test -v
+=== RUN   TestM2f
+--- PASS: TestM2f (0.00s)
+PASS
+ok  	_/home/mankov/go/m2f	0.002s
+```
 
 2. https://github.com/ozaryx/virt-HW/blob/main/07-terraform-05-golang/src/min_test.go
 ```
-$ go test
+$ go test -v
+=== RUN   TestMin
+--- PASS: TestMin (0.00s)
 PASS
 ok  	_/home/mankov/go/min	0.002s
 ```
 
+3. 
 ---
 
 ### Как cдавать задание
