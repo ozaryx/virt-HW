@@ -53,6 +53,25 @@ go version go1.18.3 linux/amd64
 
 В виде решения ссылку на код или сам код. 
 
+**Ответ**
+
+1. https://github.com/ozaryx/virt-HW/blob/main/07-terraform-05-golang/src/m2f.go
+
+```
+$ go build m2f.go
+
+$ ./m2f
+Enter a number: 1
+3.280839895013123
+
+$ ./m2f
+Enter a number: 5
+16.404199475065617
+```
+
+2. 
+
+
 ## Задача 4. Протестировать код (не обязательно).
 
 Создайте тесты для функций из предыдущего задания. 
