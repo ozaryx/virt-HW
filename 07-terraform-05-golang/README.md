@@ -69,7 +69,13 @@ Enter a number: 5
 16.404199475065617
 ```
 
-2. 
+2. https://github.com/ozaryx/virt-HW/blob/main/07-terraform-05-golang/src/min.go
+
+```
+$ go build min.go
+$ ./min
+9
+```
 
 
 ## Задача 4. Протестировать код (не обязательно).
