@@ -88,6 +88,15 @@ $ ./div3
 
 Создайте тесты для функций из предыдущего задания. 
 
+1. 
+
+2. https://github.com/ozaryx/virt-HW/blob/main/07-terraform-05-golang/src/min_test.go
+```
+$ go test
+PASS
+ok  	_/home/mankov/go/min	0.002s
+```
+
 ---
 
 ### Как cдавать задание
