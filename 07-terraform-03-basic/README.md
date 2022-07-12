@@ -10,29 +10,57 @@
 [здесь](https://www.terraform.io/docs/backends/types/s3.html).
 1. Зарегистрируйте бэкэнд в терраформ проекте как описано по ссылке выше. 
 
+![](img/s3bucket.png)
+![](img/s3acl.png)
 
 ## Задача 2. Инициализируем проект и создаем воркспейсы. 
 
 1. Выполните `terraform init`:
-    * если был создан бэкэнд в S3, то терраформ создат файл стейтов в S3 и запись в таблице 
+    * если был создан бэкэнд в S3, то терраформ создаст файл стейтов в S3 и запись в таблице 
 dynamodb.
     * иначе будет создан локальный файл со стейтами.  
 1. Создайте два воркспейса `stage` и `prod`.
-1. В уже созданный `aws_instance` добавьте зависимость типа инстанса от вокспейса, что бы в разных ворскспейсах 
+1. В уже созданный `aws_instance` добавьте зависимость типа инстанса от воркспейса, что бы в разных воркспейсах 
 использовались разные `instance_type`.
 1. Добавим `count`. Для `stage` должен создаться один экземпляр `ec2`, а для `prod` два. 
 1. Создайте рядом еще один `aws_instance`, но теперь определите их количество при помощи `for_each`, а не `count`.
 1. Что бы при изменении типа инстанса не возникло ситуации, когда не будет ни одного инстанса добавьте параметр
-жизненного цикла `create_before_destroy = true` в один из рессурсов `aws_instance`.
-1. При желании поэкспериментируйте с другими параметрами и рессурсами.
+жизненного цикла `create_before_destroy = true` в один из ресурсов `aws_instance`.
+1. При желании поэкспериментируйте с другими параметрами и ресурсами.
 
 В виде результата работы пришлите:
 * Вывод команды `terraform workspace list`.
 * Вывод команды `terraform plan` для воркспейса `prod`.  
 
+**Ответ**
+
+```text
+macbook0P0LYWK:terraform kmankov$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding latest version of yandex-cloud/yandex...
+- Installing yandex-cloud/yandex v0.76.0...
+- Installed yandex-cloud/yandex v0.76.0 (self-signed, key ID E40F590B50BB8E40)
+```
+```text
+macbook0P0LYWK:terraform kmankov$ terraform workspace new prod
+Created and switched to workspace "prod"!
+
+macbook0P0LYWK:terraform kmankov$ terraform workspace new stage
+Created and switched to workspace "stage"!
+
+macbook0P0LYWK:terraform kmankov$ terraform workspace list
+  default
+  prod
+* stage
+
+```
+
 ---
 
-### Как cдавать задание
+### Как сдавать задание
 
 Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
 
