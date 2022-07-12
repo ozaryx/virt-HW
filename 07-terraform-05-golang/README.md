@@ -106,7 +106,16 @@ PASS
 ok  	_/home/mankov/go/min	0.002s
 ```
 
-3. 
+3. https://github.com/ozaryx/virt-HW/blob/main/07-terraform-05-golang/src/div3_test.go
+```
+$ vi div3_test.go
+$ go test -v
+=== RUN   TestDiv3
+--- PASS: TestDiv3 (0.00s)
+PASS
+ok  	_/home/mankov/go/div3	0.002s
+```
+
 ---
 
 ### Как cдавать задание
