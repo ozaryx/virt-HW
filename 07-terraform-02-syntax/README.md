@@ -58,7 +58,7 @@ provider "yandex" {
 1. Ссылку на репозиторий с исходной конфигурацией терраформа.  
 
 **Ответ**
-1. CloudFormation
+1. CloudFormation или HC Packer
 2. [terraform config](https://github.com/ozaryx/virt-HW/tree/main/07-terraform-02-syntax/terraform) 
 
 ```text
