@@ -13,5 +13,5 @@ variable "yandex_folder_id" {
 # Заменить на ID своего образа
 # ID можно узнать с помощью команды yc compute image list
 variable "centos-7-base" {
-  default = "fd826sg2hrkicviib73p"
+  default = "fd88d14a6790do254kj7"
 }
