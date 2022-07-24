@@ -19,3 +19,10 @@ variable "centos-7-base" {
 variable "service_account_id" {
   default = "ajev8pdvndpdi8qbaauo"
 }
+
+variable "s3_secret_key" {
+  default = ""
+}
+variable "s3_access_key" {
+  default = ""
+}

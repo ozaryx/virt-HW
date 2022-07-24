@@ -75,3 +75,5 @@ terraform.rc
 key.json
 
 .idea/
+
+*~

@@ -1,0 +1,7 @@
+users:
+  - name: jack
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3Nza......OjbSMRX jack@hi.com

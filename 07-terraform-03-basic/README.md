@@ -56,11 +56,130 @@ Created and switched to workspace "stage"!
 
 macbook0P0LYWK:terraform kmankov$ terraform workspace list
   default
-  prod
-* stage
-
+  stage
+* prod
 ```
 
+```shell
+$ terraform plan -var-file="terraform.tfvars" 
+data.terraform_remote_state.vpc: Reading...
+data.terraform_remote_state.vpc: Read complete after 0s
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # yandex_compute_instance_group.group01 will be created
+  + resource "yandex_compute_instance_group" "group01" {
+      + created_at          = (known after apply)
+      + deletion_protection = false
+      + folder_id           = "b1g0k1eq7s5942g41mdq"
+      + id                  = (known after apply)
+      + instances           = (known after apply)
+      + name                = "prod"
+      + service_account_id  = "ajev8pdvndpdi8qbaauo"
+      + status              = (known after apply)
+
+      + allocation_policy {
+          + zones = [
+              + "ru-central1-b",
+            ]
+        }
+
+      + deploy_policy {
+          + max_creating     = 0
+          + max_deleting     = 0
+          + max_expansion    = 2
+          + max_unavailable  = 2
+          + startup_duration = 0
+          + strategy         = (known after apply)
+        }
+
+      + instance_template {
+          + labels      = (known after apply)
+          + metadata    = {
+              + "user-data" = <<-EOT
+                    users:
+                      - name: jack
+                        groups: sudo
+                        shell: /bin/bash
+                        sudo: ['ALL=(ALL) NOPASSWD:ALL']
+                        ssh_authorized_keys:
+                          - ssh-rsa AAAAB3Nza......OjbSMRX jack@hi.com
+                EOT
+            }
+          + platform_id = "standard-v2"
+
+          + boot_disk {
+              + device_name = (known after apply)
+              + mode        = "READ_WRITE"
+
+              + initialize_params {
+                  + image_id    = "fd88d14a6790do254kj7"
+                  + size        = 50
+                  + snapshot_id = (known after apply)
+                  + type        = "network-nvme"
+                }
+            }
+
+          + network_interface {
+              + ip_address   = (known after apply)
+              + ipv4         = true
+              + ipv6         = (known after apply)
+              + ipv6_address = (known after apply)
+              + nat          = true
+              + subnet_ids   = (known after apply)
+            }
+
+          + resources {
+              + core_fraction = 100
+              + cores         = 2
+              + memory        = 2
+            }
+
+          + scheduling_policy {
+              + preemptible = (known after apply)
+            }
+        }
+
+      + scale_policy {
+
+          + fixed_scale {
+              + size = 2
+            }
+        }
+    }
+
+  # yandex_vpc_network.net-1 will be created
+  + resource "yandex_vpc_network" "net-1" {
+      + created_at                = (known after apply)
+      + default_security_group_id = (known after apply)
+      + folder_id                 = (known after apply)
+      + id                        = (known after apply)
+      + labels                    = (known after apply)
+      + name                      = "net-prod"
+      + subnet_ids                = (known after apply)
+    }
+
+  # yandex_vpc_subnet.subnet-1 will be created
+  + resource "yandex_vpc_subnet" "subnet-1" {
+      + created_at     = (known after apply)
+      + folder_id      = (known after apply)
+      + id             = (known after apply)
+      + labels         = (known after apply)
+      + name           = "subnet-prod"
+      + network_id     = (known after apply)
+      + v4_cidr_blocks = [
+          + "192.168.90.0/24",
+        ]
+      + v6_cidr_blocks = (known after apply)
+      + zone           = "ru-central1-b"
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+
+```
 ---
 
 ### Как сдавать задание
